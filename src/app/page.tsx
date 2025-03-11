@@ -1,12 +1,26 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
+import UnreadMessagesNotification from '@/components/UnreadMessagesNotification';
 
 export default function Home() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    // Имитация получения данных о непрочитанных сообщениях
+    const timer = setTimeout(() => {
+      const randomCount = Math.floor(Math.random() * 5) + 1; // Случайное число от 1 до 5
+      setUnreadCount(randomCount);
+      setShowNotification(true);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleConnect = async () => {
     setLoading(true);
@@ -26,6 +40,11 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleNotificationClick = () => {
+    handleConnect();
+    setShowNotification(false);
   };
 
   return (
@@ -81,6 +100,14 @@ export default function Home() {
           Это демонстрационное приложение. В реальной версии потребуется авторизация через Telegram API.
         </p>
       </div>
+
+      {/* Уведомление о непрочитанных сообщениях */}
+      {showNotification && unreadCount > 0 && (
+        <UnreadMessagesNotification 
+          count={unreadCount} 
+          onClick={handleNotificationClick} 
+        />
+      )}
     </main>
   );
 }
