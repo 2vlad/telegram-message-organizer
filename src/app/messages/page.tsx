@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Message } from 'telegram/tl/types';
 import { MessageStorageService, ChatType } from '@/lib/messageStorage';
 import { toast } from 'react-hot-toast';
-import UnreadMessagesNotification from '@/components/UnreadMessagesNotification';
+import UnreadMessagesBanner from '@/components/UnreadMessagesBanner';
 
 // Инициализация сервиса хранения сообщений
 const messageStorage = new MessageStorageService();
@@ -20,11 +20,21 @@ export default function MessagesPage() {
     discussion: []
   });
   const [loading, setLoading] = useState<boolean>(true);
-  const [activeTab, setActiveTab] = useState<'personal' | 'news' | 'discussion'>('personal');
+  const [activeTab, setActiveTab] = useState<'personal' | 'news' | 'discussion'>('news');
   const [unreadPersonalCount, setUnreadPersonalCount] = useState<number>(0);
-  const [showNotification, setShowNotification] = useState<boolean>(false);
+  const [greeting, setGreeting] = useState<string>('Good morning');
 
   useEffect(() => {
+    // Определение приветствия в зависимости от времени суток
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+      setGreeting('Good morning');
+    } else if (hour >= 12 && hour < 18) {
+      setGreeting('Good afternoon');
+    } else {
+      setGreeting('Good evening');
+    }
+
     // Имитация загрузки сообщений из Telegram API
     const fetchMessages = async () => {
       try {
@@ -58,14 +68,8 @@ export default function MessagesPage() {
         
         setMessages(verifiedMessages);
 
-        // Имитация непрочитанных личных сообщений
-        const unreadCount = Math.floor(Math.random() * 5) + 1; // Случайное число от 1 до 5
-        setUnreadPersonalCount(unreadCount);
-        
-        // Показываем уведомление через небольшую задержку
-        setTimeout(() => {
-          setShowNotification(true);
-        }, 2000);
+        // Имитация непрочитанных личных сообщений (для демонстрации используем 56, как на скриншоте)
+        setUnreadPersonalCount(56);
       } catch (error) {
         console.error('Error fetching messages:', error);
         toast.error('Ошибка при загрузке сообщений');
@@ -88,10 +92,9 @@ export default function MessagesPage() {
     ] as unknown as Message[];
   };
 
-  // Обработчик клика по уведомлению
-  const handleNotificationClick = () => {
+  // Обработчик клика по баннеру
+  const handleBannerClick = () => {
     setActiveTab('personal');
-    setShowNotification(false);
     toast.success('Переход к личным сообщениям');
   };
 
@@ -109,7 +112,14 @@ export default function MessagesPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Сообщения Telegram</h1>
+      {/* Баннер с уведомлением о непрочитанных сообщениях */}
+      {unreadPersonalCount > 0 && activeTab !== 'personal' && (
+        <UnreadMessagesBanner 
+          count={unreadPersonalCount} 
+          greeting={greeting}
+          onClick={handleBannerClick} 
+        />
+      )}
       
       {/* Табы для переключения категорий */}
       <div className="flex border-b mb-4">
@@ -117,10 +127,10 @@ export default function MessagesPage() {
           className={`py-2 px-4 relative ${activeTab === 'personal' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
           onClick={() => setActiveTab('personal')}
         >
-          Личные ({messages.personal.length})
+          Personal ({messages.personal.length})
           {unreadPersonalCount > 0 && activeTab !== 'personal' && (
             <span className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-              {unreadPersonalCount}
+              {unreadPersonalCount > 99 ? '99+' : unreadPersonalCount}
             </span>
           )}
         </button>
@@ -128,13 +138,13 @@ export default function MessagesPage() {
           className={`py-2 px-4 ${activeTab === 'news' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
           onClick={() => setActiveTab('news')}
         >
-          Новости ({messages.news.length})
+          News ({messages.news.length})
         </button>
         <button
           className={`py-2 px-4 ${activeTab === 'discussion' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
           onClick={() => setActiveTab('discussion')}
         >
-          Обсуждения ({messages.discussion.length})
+          Discussions ({messages.discussion.length})
         </button>
       </div>
       
@@ -151,7 +161,7 @@ export default function MessagesPage() {
                 {messages.personal.length > 0 ? (
                   messages.personal.map(renderMessage)
                 ) : (
-                  <div className="text-center text-gray-500 py-8">Нет личных сообщений</div>
+                  <div className="text-center text-gray-500 py-8">No personal messages</div>
                 )}
               </div>
             )}
@@ -161,7 +171,7 @@ export default function MessagesPage() {
                 {messages.news.length > 0 ? (
                   messages.news.map(renderMessage)
                 ) : (
-                  <div className="text-center text-gray-500 py-8">Нет новостных сообщений</div>
+                  <div className="text-center text-gray-500 py-8">No news messages</div>
                 )}
               </div>
             )}
@@ -171,21 +181,13 @@ export default function MessagesPage() {
                 {messages.discussion.length > 0 ? (
                   messages.discussion.map(renderMessage)
                 ) : (
-                  <div className="text-center text-gray-500 py-8">Нет сообщений из обсуждений</div>
+                  <div className="text-center text-gray-500 py-8">No discussion messages</div>
                 )}
               </div>
             )}
           </div>
         )}
       </div>
-
-      {/* Уведомление о непрочитанных сообщениях */}
-      {showNotification && unreadPersonalCount > 0 && activeTab !== 'personal' && (
-        <UnreadMessagesNotification 
-          count={unreadPersonalCount} 
-          onClick={handleNotificationClick} 
-        />
-      )}
     </div>
   );
 }
