@@ -33,96 +33,96 @@ export default function MessagesPage() {
     // Для демонстрации создадим моковые данные, имитирующие чаты со скриншота
     return [
       // Моковые данные для демонстрации
-      // Имитация чатов со скриншота
+      // Имитация чатов со скриншота - используем правильные API типы
       {
         id: 1,
         message: 'За пять лет ни разу вопросов не было. В начале марта вернулись с очередного визарана. Всё прошло отлично.',
         date: Math.floor(Date.now() / 1000) - 3600,
-        peer_id: { _: 'peerUser', user_id: 101 },
-        from_id: { _: 'peerUser', user_id: 101 },
+        peer_id: { _: 'peerChannel', channel_id: 101 }, // Используем peerChannel для каналов
+        from_id: { _: 'peerChannel', channel_id: 101 },
         peerId: {
-          _: 'user',
+          _: 'channel', // Правильный тип API для канала
           id: 101,
           title: 'Черногория 🇲🇪 TravelAsk',
-          bot: false
+          participants_count: 1000
         }
       },
       {
         id: 2,
         message: 'Да. Присоединяемся). Это самый экономичный и удобный вариант. Пользуемся им уже пять лет.',
         date: Math.floor(Date.now() / 1000) - 7200,
-        peer_id: { _: 'peerUser', user_id: 101 },
-        from_id: { _: 'peerUser', user_id: 101 },
+        peer_id: { _: 'peerChannel', channel_id: 101 },
+        from_id: { _: 'peerChannel', channel_id: 101 },
         peerId: {
-          _: 'user',
+          _: 'channel',
           id: 101,
           title: 'Черногория 🇲🇪 TravelAsk',
-          bot: false
+          participants_count: 1000
         }
       },
       {
         id: 3,
         message: 'А на границах спокойно относиться ?',
         date: Math.floor(Date.now() / 1000) - 10800,
-        peer_id: { _: 'peerUser', user_id: 101 },
-        from_id: { _: 'peerUser', user_id: 101 },
+        peer_id: { _: 'peerChannel', channel_id: 101 },
+        from_id: { _: 'peerChannel', channel_id: 101 },
         peerId: {
-          _: 'user',
+          _: 'channel',
           id: 101,
           title: 'Черногория 🇲🇪 TravelAsk',
-          bot: false
+          participants_count: 1000
         }
       },
       {
         id: 4,
         message: 'Ребята, может быть кто-нибудь знает, можно ли в Бангкоке сделать визу в Китай?',
         date: Math.floor(Date.now() / 1000) - 3600,
-        peer_id: { _: 'peerUser', user_id: 102 },
-        from_id: { _: 'peerUser', user_id: 102 },
+        peer_id: { _: 'peerChannel', channel_id: 102 },
+        from_id: { _: 'peerChannel', channel_id: 102 },
         peerId: {
-          _: 'user',
+          _: 'channel',
           id: 102,
           title: 'Пангаи Ко-Phangan',
-          bot: false
+          participants_count: 800
         }
       },
       {
         id: 5,
         message: 'Katerina выберите Морковь',
         date: Math.floor(Date.now() / 1000) - 7200,
-        peer_id: { _: 'peerUser', user_id: 102 },
-        from_id: { _: 'peerUser', user_id: 102 },
+        peer_id: { _: 'peerChannel', channel_id: 102 },
+        from_id: { _: 'peerChannel', channel_id: 102 },
         peerId: {
-          _: 'user',
+          _: 'channel',
           id: 102,
           title: 'Пангаи Ко-Phangan',
-          bot: false
+          participants_count: 800
         }
       },
       {
         id: 6,
         message: 'Именно автобус нужен? Из Сураттани самолеты в Бангкок летают плюс минус по цене автобуса',
         date: Math.floor(Date.now() / 1000) - 10800,
-        peer_id: { _: 'peerUser', user_id: 102 },
-        from_id: { _: 'peerUser', user_id: 102 },
+        peer_id: { _: 'peerChannel', channel_id: 102 },
+        from_id: { _: 'peerChannel', channel_id: 102 },
         peerId: {
-          _: 'user',
+          _: 'channel',
           id: 102,
           title: 'Пангаи Ко-Phangan',
-          bot: false
+          participants_count: 800
         }
       },
       {
         id: 7,
         message: 'Отлично растворяются. Лично я китайцами считаю только китайцев из Китая, что живут в Китае. Вне Китая они мгновенно меняются. Они вообще другие. Особенно в США',
         date: Math.floor(Date.now() / 1000) - 3600,
-        peer_id: { _: 'peerUser', user_id: 103 },
-        from_id: { _: 'peerUser', user_id: 103 },
+        peer_id: { _: 'peerChat', chat_id: 103 }, // Используем peerChat для групповых чатов
+        from_id: { _: 'peerUser', user_id: 301 },
         peerId: {
-          _: 'user',
+          _: 'chat', // Правильный тип API для группового чата
           id: 103,
           title: 'Смыслы самоочевидного',
-          bot: false
+          participants_count: 50
         }
       },
       // Добавим несколько настоящих личных сообщений
@@ -130,12 +130,13 @@ export default function MessagesPage() {
         id: 8,
         message: 'Привет! Как дела?',
         date: Math.floor(Date.now() / 1000) - 1800,
-        peer_id: { _: 'peerUser', user_id: 201 },
+        peer_id: { _: 'peerUser', user_id: 201 }, // Используем peerUser для личных сообщений
         from_id: { _: 'peerUser', user_id: 201 },
         peerId: {
-          _: 'user',
+          _: 'user', // Правильный тип API для пользователя
           id: 201,
-          title: 'Иван Петров',
+          first_name: 'Иван',
+          last_name: 'Петров',
           bot: false
         }
       },
@@ -143,12 +144,13 @@ export default function MessagesPage() {
         id: 9,
         message: 'Отлично! Встретимся завтра?',
         date: Math.floor(Date.now() / 1000) - 1700,
-        peer_id: { _: 'peerUser', user_id: 12345 },
-        from_id: { _: 'peerUser', user_id: 12345 },
+        peer_id: { _: 'peerUser', user_id: 201 },
+        from_id: { _: 'peerUser', user_id: 12345 }, // Текущий пользователь
         peerId: {
           _: 'user',
           id: 201,
-          title: 'Иван Петров',
+          first_name: 'Иван',
+          last_name: 'Петров',
           bot: false
         }
       },
@@ -161,7 +163,8 @@ export default function MessagesPage() {
         peerId: {
           _: 'user',
           id: 201,
-          title: 'Иван Петров',
+          first_name: 'Иван',
+          last_name: 'Петров',
           bot: false
         }
       }
@@ -176,7 +179,7 @@ export default function MessagesPage() {
     // Получаем сгруппированные сообщения
     const groupedMessages = messageStorage.getGroupedMessagesByCategory();
     
-    // Применяем финальную проверку категоризации для всех категорий
+    // Применяем финальную проверку ка��егоризации для всех категорий
     const verifiedMessages = {
       personal: groupedMessages.personal.filter(msg => 
         messageStorage.verifyMessageCategory(msg, ChatType.PERSONAL)
@@ -197,7 +200,7 @@ export default function MessagesPage() {
     try {
       setLoading(true);
       
-      // В реальном приложе��ии здесь был бы запрос к Telegram API
+      // В реальном приложении здесь был бы запрос к Telegram API
       const mockMessages = await getMockMessages();
       
       // Добавляем сообщения в хранилище
@@ -207,7 +210,7 @@ export default function MessagesPage() {
       const verifiedMessages = categorizeAndVerifyMessages();
       
       setMessages(verifiedMessages);
-      toast.success('Сообщения обновлены и перекатегоризированы');
+      toast.success('Сообщения обновлены');
     } catch (error) {
       console.error('Error refreshing messages:', error);
       toast.error('Ошибка при обновлении сообщений');
@@ -270,9 +273,18 @@ export default function MessagesPage() {
 
   // Рендер сообщения
   const renderMessage = (message: Message) => {
-    // Получаем информацию о чате
+    // Получаем информацию о чате из API данных
     const chat = message.peerId as any;
-    const chatTitle = chat?.title || 'Неизвестный чат';
+    let chatTitle = 'Неизвестный чат';
+    
+    // Используем API данные для отображения названия чата
+    if (chat) {
+      if (chat._ === 'user') {
+        chatTitle = `${chat.first_name || ''} ${chat.last_name || ''}`.trim();
+      } else if (chat.title) {
+        chatTitle = chat.title;
+      }
+    }
     
     return (
       <div key={message.id} className="p-4 border rounded-lg mb-2 bg-white shadow-sm">
