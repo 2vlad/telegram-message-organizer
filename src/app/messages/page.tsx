@@ -30,13 +30,149 @@ export default function MessagesPage() {
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Здесь в реальном приложении были бы настоящие данные из Telegram API
+    // Для демонстрации создадим моковые данные, имитирующие чаты со скриншота
     return [
       // Моковые данные для демонстрации
+      // Имитация чатов со скриншота
+      {
+        id: 1,
+        message: 'За пять лет ни разу вопросов не было. В начале марта вернулись с очередного визарана. Всё прошло отлично.',
+        date: Math.floor(Date.now() / 1000) - 3600,
+        peer_id: { _: 'peerUser', user_id: 101 },
+        from_id: { _: 'peerUser', user_id: 101 },
+        peerId: {
+          _: 'user',
+          id: 101,
+          title: 'Черногория 🇲🇪 TravelAsk',
+          bot: false
+        }
+      },
+      {
+        id: 2,
+        message: 'Да. Присоединяемся). Это самый экономичный и удобный вариант. Пользуемся им уже пять лет.',
+        date: Math.floor(Date.now() / 1000) - 7200,
+        peer_id: { _: 'peerUser', user_id: 101 },
+        from_id: { _: 'peerUser', user_id: 101 },
+        peerId: {
+          _: 'user',
+          id: 101,
+          title: 'Черногория 🇲🇪 TravelAsk',
+          bot: false
+        }
+      },
+      {
+        id: 3,
+        message: 'А на границах спокойно относиться ?',
+        date: Math.floor(Date.now() / 1000) - 10800,
+        peer_id: { _: 'peerUser', user_id: 101 },
+        from_id: { _: 'peerUser', user_id: 101 },
+        peerId: {
+          _: 'user',
+          id: 101,
+          title: 'Черногория 🇲🇪 TravelAsk',
+          bot: false
+        }
+      },
+      {
+        id: 4,
+        message: 'Ребята, может быть кто-нибудь знает, можно ли в Бангкоке сделать визу в Китай?',
+        date: Math.floor(Date.now() / 1000) - 3600,
+        peer_id: { _: 'peerUser', user_id: 102 },
+        from_id: { _: 'peerUser', user_id: 102 },
+        peerId: {
+          _: 'user',
+          id: 102,
+          title: 'Пангаи Ко-Phangan',
+          bot: false
+        }
+      },
+      {
+        id: 5,
+        message: 'Katerina выберите Морковь',
+        date: Math.floor(Date.now() / 1000) - 7200,
+        peer_id: { _: 'peerUser', user_id: 102 },
+        from_id: { _: 'peerUser', user_id: 102 },
+        peerId: {
+          _: 'user',
+          id: 102,
+          title: 'Пангаи Ко-Phangan',
+          bot: false
+        }
+      },
+      {
+        id: 6,
+        message: 'Именно автобус нужен? Из Сураттани самолеты в Бангкок летают плюс минус по цене автобуса',
+        date: Math.floor(Date.now() / 1000) - 10800,
+        peer_id: { _: 'peerUser', user_id: 102 },
+        from_id: { _: 'peerUser', user_id: 102 },
+        peerId: {
+          _: 'user',
+          id: 102,
+          title: 'Пангаи Ко-Phangan',
+          bot: false
+        }
+      },
+      {
+        id: 7,
+        message: 'Отлично растворяются. Лично я китайцами считаю только китайцев из Китая, что живут в Китае. Вне Китая они мгновенно меняются. Они вообще другие. Особенно в США',
+        date: Math.floor(Date.now() / 1000) - 3600,
+        peer_id: { _: 'peerUser', user_id: 103 },
+        from_id: { _: 'peerUser', user_id: 103 },
+        peerId: {
+          _: 'user',
+          id: 103,
+          title: 'Смыслы самоочевидного',
+          bot: false
+        }
+      },
+      // Добавим несколько настоящих личных сообщений
+      {
+        id: 8,
+        message: 'Привет! Как дела?',
+        date: Math.floor(Date.now() / 1000) - 1800,
+        peer_id: { _: 'peerUser', user_id: 201 },
+        from_id: { _: 'peerUser', user_id: 201 },
+        peerId: {
+          _: 'user',
+          id: 201,
+          title: 'Иван Петров',
+          bot: false
+        }
+      },
+      {
+        id: 9,
+        message: 'Отлично! Встретимся завтра?',
+        date: Math.floor(Date.now() / 1000) - 1700,
+        peer_id: { _: 'peerUser', user_id: 12345 },
+        from_id: { _: 'peerUser', user_id: 12345 },
+        peerId: {
+          _: 'user',
+          id: 201,
+          title: 'Иван Петров',
+          bot: false
+        }
+      },
+      {
+        id: 10,
+        message: 'Да, конечно! В 15:00 у метро?',
+        date: Math.floor(Date.now() / 1000) - 1600,
+        peer_id: { _: 'peerUser', user_id: 201 },
+        from_id: { _: 'peerUser', user_id: 201 },
+        peerId: {
+          _: 'user',
+          id: 201,
+          title: 'Иван Петров',
+          bot: false
+        }
+      }
     ] as unknown as Message[];
   };
 
   // Функция для категоризации сообщений с применением финальной проверки
   const categorizeAndVerifyMessages = useCallback(() => {
+    // Принудительно перекатегоризируем все сообщения
+    messageStorage.recategorizeAllMessages();
+    
     // Получаем сгруппированные сообщения
     const groupedMessages = messageStorage.getGroupedMessagesByCategory();
     
@@ -61,7 +197,7 @@ export default function MessagesPage() {
     try {
       setLoading(true);
       
-      // В реальном приложении здесь был бы запрос к Telegram API
+      // В реальном приложе��ии здесь был бы запрос к Telegram API
       const mockMessages = await getMockMessages();
       
       // Добавляем сообщения в хранилище
@@ -71,6 +207,7 @@ export default function MessagesPage() {
       const verifiedMessages = categorizeAndVerifyMessages();
       
       setMessages(verifiedMessages);
+      toast.success('Сообщения обновлены и перекатегоризированы');
     } catch (error) {
       console.error('Error refreshing messages:', error);
       toast.error('Ошибка при обновлении сообщений');
@@ -104,6 +241,9 @@ export default function MessagesPage() {
         // Добавляем сообщения в хранилище
         messageStorage.addMessages(mockMessages);
         
+        // Принудительно перекатегоризируем все сообщения
+        messageStorage.recategorizeAllMessages();
+        
         // Категоризируем и проверяем сообщения
         const verifiedMessages = categorizeAndVerifyMessages();
         
@@ -130,8 +270,13 @@ export default function MessagesPage() {
 
   // Рендер сообщения
   const renderMessage = (message: Message) => {
+    // Получаем информацию о чате
+    const chat = message.peerId as any;
+    const chatTitle = chat?.title || 'Неизвестный чат';
+    
     return (
       <div key={message.id} className="p-4 border rounded-lg mb-2 bg-white shadow-sm">
+        <div className="font-medium text-gray-700 mb-1">{chatTitle}</div>
         <div className="font-medium">{message.message || 'Медиа-контент'}</div>
         <div className="text-sm text-gray-500 mt-1">
           {new Date((message.date || 0) * 1000).toLocaleString()}
