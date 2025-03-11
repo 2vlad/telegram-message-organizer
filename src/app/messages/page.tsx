@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Message } from 'telegram/tl/types';
 import { MessageStorageService, ChatType } from '@/lib/messageStorage';
 import { toast } from 'react-hot-toast';
@@ -24,6 +24,61 @@ export default function MessagesPage() {
   const [unreadPersonalCount, setUnreadPersonalCount] = useState<number>(0);
   const [greeting, setGreeting] = useState<string>('Good morning');
 
+  // Функция для получения моковых данных
+  const getMockMessages = async (): Promise<Message[]> => {
+    // Имитация задержки сети
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Здесь в реальном приложении были бы настоящие данные из Telegram API
+    return [
+      // Моковые данные для демонстрации
+    ] as unknown as Message[];
+  };
+
+  // Функция для категоризации сообщений с применением финальной проверки
+  const categorizeAndVerifyMessages = useCallback(() => {
+    // Получаем сгруппированные сообщения
+    const groupedMessages = messageStorage.getGroupedMessagesByCategory();
+    
+    // Применяем финальную проверку категоризации для всех категорий
+    const verifiedMessages = {
+      personal: groupedMessages.personal.filter(msg => 
+        messageStorage.verifyMessageCategory(msg, ChatType.PERSONAL)
+      ),
+      news: groupedMessages.news.filter(msg => 
+        messageStorage.verifyMessageCategory(msg, ChatType.NEWS)
+      ),
+      discussion: groupedMessages.discussion.filter(msg => 
+        messageStorage.verifyMessageCategory(msg, ChatType.DISCUSSION)
+      )
+    };
+    
+    return verifiedMessages;
+  }, []);
+
+  // Функция для обновления сообщений
+  const refreshMessages = useCallback(async () => {
+    try {
+      setLoading(true);
+      
+      // В реальном приложении здесь был бы запрос к Telegram API
+      const mockMessages = await getMockMessages();
+      
+      // Добавляем сообщения в хранилище
+      messageStorage.addMessages(mockMessages);
+      
+      // Категоризируем и проверяем сообщения
+      const verifiedMessages = categorizeAndVerifyMessages();
+      
+      setMessages(verifiedMessages);
+    } catch (error) {
+      console.error('Error refreshing messages:', error);
+      toast.error('Ошибка при обновлении сообщений');
+    } finally {
+      setLoading(false);
+    }
+  }, [categorizeAndVerifyMessages]);
+
   useEffect(() => {
     // Определение приветствия в зависимости от времени суток
     const hour = new Date().getHours();
@@ -40,31 +95,17 @@ export default function MessagesPage() {
       try {
         setLoading(true);
         
-        // В реальном приложении здесь был бы запрос к Telegram API
-        // Для демонстрации используем моковые данные
-        const mockMessages = await getMockMessages();
-        
         // Устанавливаем ID текущего пользователя
         messageStorage.setCurrentUserId(12345);
+        
+        // В реальном приложении здесь был бы запрос к Telegram API
+        const mockMessages = await getMockMessages();
         
         // Добавляем сообщения в хранилище
         messageStorage.addMessages(mockMessages);
         
-        // Получаем сгруппированные сообщения
-        const groupedMessages = messageStorage.getGroupedMessagesByCategory();
-        
-        // Финальная проверка категоризации
-        const verifiedMessages = {
-          personal: groupedMessages.personal.filter(msg => 
-            messageStorage.verifyMessageCategory(msg, ChatType.PERSONAL)
-          ),
-          news: groupedMessages.news.filter(msg => 
-            messageStorage.verifyMessageCategory(msg, ChatType.NEWS)
-          ),
-          discussion: groupedMessages.discussion.filter(msg => 
-            messageStorage.verifyMessageCategory(msg, ChatType.DISCUSSION)
-          )
-        };
+        // Категоризируем и проверяем сообщения
+        const verifiedMessages = categorizeAndVerifyMessages();
         
         setMessages(verifiedMessages);
 
@@ -79,18 +120,7 @@ export default function MessagesPage() {
     };
 
     fetchMessages();
-  }, []);
-
-  // Функция для получения моковых данных
-  const getMockMessages = async (): Promise<Message[]> => {
-    // Имитация задержки сети
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Здесь в реальном приложении были бы настоящие данные из Telegram API
-    return [
-      // Моковые данные для демонстрации
-    ] as unknown as Message[];
-  };
+  }, [categorizeAndVerifyMessages]);
 
   // Обработчик клика по баннеру
   const handleBannerClick = () => {
@@ -187,6 +217,19 @@ export default function MessagesPage() {
             )}
           </div>
         )}
+      </div>
+
+      {/* Кнопка обновления сообщений */}
+      <div className="fixed bottom-4 right-4">
+        <button
+          onClick={refreshMessages}
+          className="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-3 shadow-lg"
+          aria-label="Refresh messages"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </button>
       </div>
     </div>
   );
