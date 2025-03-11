@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Message } from 'telegram/tl/types';
 import { MessageStorageService, ChatType } from '@/lib/messageStorage';
 import { toast } from 'react-hot-toast';
+import UnreadMessagesNotification from '@/components/UnreadMessagesNotification';
 
 // Инициализация сервиса хранения сообщений
 const messageStorage = new MessageStorageService();
@@ -20,6 +21,8 @@ export default function MessagesPage() {
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<'personal' | 'news' | 'discussion'>('personal');
+  const [unreadPersonalCount, setUnreadPersonalCount] = useState<number>(0);
+  const [showNotification, setShowNotification] = useState<boolean>(false);
 
   useEffect(() => {
     // Имитация загрузки сообщений из Telegram API
@@ -54,6 +57,15 @@ export default function MessagesPage() {
         };
         
         setMessages(verifiedMessages);
+
+        // Имитация непрочитанных личных сообщений
+        const unreadCount = Math.floor(Math.random() * 5) + 1; // Случайное число от 1 до 5
+        setUnreadPersonalCount(unreadCount);
+        
+        // Показываем уведомление через небольшую задержку
+        setTimeout(() => {
+          setShowNotification(true);
+        }, 2000);
       } catch (error) {
         console.error('Error fetching messages:', error);
         toast.error('Ошибка при загрузке сообщений');
@@ -76,6 +88,13 @@ export default function MessagesPage() {
     ] as unknown as Message[];
   };
 
+  // Обработчик клика по уведомлению
+  const handleNotificationClick = () => {
+    setActiveTab('personal');
+    setShowNotification(false);
+    toast.success('Переход к личным сообщениям');
+  };
+
   // Рендер сообщения
   const renderMessage = (message: Message) => {
     return (
@@ -95,10 +114,15 @@ export default function MessagesPage() {
       {/* Табы для переключения категорий */}
       <div className="flex border-b mb-4">
         <button
-          className={`py-2 px-4 ${activeTab === 'personal' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
+          className={`py-2 px-4 relative ${activeTab === 'personal' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
           onClick={() => setActiveTab('personal')}
         >
           Личные ({messages.personal.length})
+          {unreadPersonalCount > 0 && activeTab !== 'personal' && (
+            <span className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+              {unreadPersonalCount}
+            </span>
+          )}
         </button>
         <button
           className={`py-2 px-4 ${activeTab === 'news' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
@@ -154,6 +178,14 @@ export default function MessagesPage() {
           </div>
         )}
       </div>
+
+      {/* Уведомление о непрочитанных сообщениях */}
+      {showNotification && unreadPersonalCount > 0 && activeTab !== 'personal' && (
+        <UnreadMessagesNotification 
+          count={unreadPersonalCount} 
+          onClick={handleNotificationClick} 
+        />
+      )}
     </div>
   );
 }
