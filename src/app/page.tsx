@@ -3,21 +3,32 @@
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import UnreadMessagesNotification from '@/components/UnreadMessagesNotification';
+import UnreadMessagesBanner from '@/components/UnreadMessagesBanner';
 
 export default function Home() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [greeting, setGreeting] = useState<string>('Good morning');
 
   useEffect(() => {
+    // Определение приветствия в зависимости от времени суток
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+      setGreeting('Good morning');
+    } else if (hour >= 12 && hour < 18) {
+      setGreeting('Good afternoon');
+    } else {
+      setGreeting('Good evening');
+    }
+
     // Имитация получения данных о непрочитанных сообщениях
     const timer = setTimeout(() => {
-      const randomCount = Math.floor(Math.random() * 5) + 1; // Случайное число от 1 до 5
-      setUnreadCount(randomCount);
+      // Для демонстрации используем 56, как на скриншоте
+      setUnreadCount(56);
       setShowNotification(true);
-    }, 3000);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -44,12 +55,22 @@ export default function Home() {
 
   const handleNotificationClick = () => {
     handleConnect();
-    setShowNotification(false);
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-gray-50">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
+    <main className="flex min-h-screen flex-col items-center p-4 bg-gray-50">
+      {/* Баннер с уведомлением о непрочитанных сообщениях */}
+      {showNotification && unreadCount > 0 && (
+        <div className="w-full max-w-3xl mb-6">
+          <UnreadMessagesBanner 
+            count={unreadCount} 
+            greeting={greeting}
+            onClick={handleNotificationClick} 
+          />
+        </div>
+      )}
+      
+      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 mt-4">
         <h1 className="text-3xl font-bold text-center mb-6">
           Telegram Message Organizer
         </h1>
@@ -60,21 +81,21 @@ export default function Home() {
         
         <div className="space-y-4">
           <div className="bg-blue-50 p-4 rounded-lg">
-            <h2 className="font-semibold text-blue-800 mb-2">Личные сообщения</h2>
+            <h2 className="font-semibold text-blue-800 mb-2">Personal messages</h2>
             <p className="text-sm text-blue-600">
               Диалоги с друзьями, коллегами и другими пользователями
             </p>
           </div>
           
           <div className="bg-green-50 p-4 rounded-lg">
-            <h2 className="font-semibold text-green-800 mb-2">Новостные каналы</h2>
+            <h2 className="font-semibold text-green-800 mb-2">News channels</h2>
             <p className="text-sm text-green-600">
               Каналы с новостями, блоги и официальные источники информации
             </p>
           </div>
           
           <div className="bg-purple-50 p-4 rounded-lg">
-            <h2 className="font-semibold text-purple-800 mb-2">Обсуждения</h2>
+            <h2 className="font-semibold text-purple-800 mb-2">Discussions</h2>
             <p className="text-sm text-purple-600">
               Групповые чаты, дискуссии и сообщества
             </p>
@@ -89,10 +110,10 @@ export default function Home() {
           {loading ? (
             <>
               <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
-              Подключение...
+              Connecting...
             </>
           ) : (
-            'Подключиться к Telegram'
+            'Connect to Telegram'
           )}
         </button>
         
@@ -100,14 +121,6 @@ export default function Home() {
           Это демонстрационное приложение. В реальной версии потребуется авторизация через Telegram API.
         </p>
       </div>
-
-      {/* Уведомление о непрочитанных сообщениях */}
-      {showNotification && unreadCount > 0 && (
-        <UnreadMessagesNotification 
-          count={unreadCount} 
-          onClick={handleNotificationClick} 
-        />
-      )}
     </main>
   );
 }
